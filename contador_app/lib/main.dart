@@ -19,7 +19,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
+//widget com tipo stateles nunca muda o estado
+//o widget statefull ele pode atualizar os widget na tela
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
