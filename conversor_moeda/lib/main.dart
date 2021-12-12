@@ -32,17 +32,22 @@ class _HomeState extends State<Home> {
   double dolar;
   double euro;
 
-  void _realChanged(String text){
-    print(text);
+  void _realChanged(String text) {
+    double real = double.parse(text);
+    dolarController.text = (real / dolar).toStringAsFixed(2);
+    euroController.text = (real / euro).toStringAsFixed(2);
   }
 
-  void _dolarChanged(String text){
-    print(text);
+  void _dolarChanged(String text) {
+    double dolar = double.parse(text);
+    realControler.text = (dolar * this.dolar).toStringAsFixed(2);
+    euroController.text = (dolar * this.dolar / euro).toStringAsFixed(2);
   }
 
-
-  void _euroChanged(String text){
-  print(text);
+  void _euroChanged(String text) {
+    double euro = double.parse(text);
+    realControler.text = (euro * this.euro).toStringAsFixed(2);
+    dolarController.text = (euro * this.euro / dolar).toStringAsFixed(2);
   }
 
   @override
@@ -89,11 +94,14 @@ class _HomeState extends State<Home> {
                             size: 120,
                             color: Colors.amber,
                           ),
-                          buildTextField("Reais", "R\$", realControler, _realChanged),
+                          buildTextField(
+                              "Reais", "R\$", realControler, _realChanged),
                           Divider(),
-                          buildTextField("Dolar", "US\$", dolarController,_dolarChanged),
+                          buildTextField(
+                              "Dolar", "US\$", dolarController, _dolarChanged),
                           Divider(),
-                          buildTextField("Euros", "E\$", euroController, _euroChanged)
+                          buildTextField(
+                              "Euros", "E\$", euroController, _euroChanged)
                         ],
                       ),
                     );
@@ -103,7 +111,8 @@ class _HomeState extends State<Home> {
   }
 }
 
-Widget buildTextField(String label, String prefix, TextEditingController c, Function f) {
+Widget buildTextField(
+    String label, String prefix, TextEditingController c, Function f) {
   return TextField(
     textAlign: TextAlign.center,
     controller: c,
