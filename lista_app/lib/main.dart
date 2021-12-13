@@ -19,6 +19,16 @@ class _HomeState extends State<Home> {
   List _toDoList = [];
   final getTarefa = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    _readData().then((data) {
+      setState(() {
+        _toDoList = json.decode(data!);
+      });
+    });
+  }
+
   void _addToDo() {
     setState(() {
       Map<String, dynamic> newToDo = Map();
@@ -26,12 +36,13 @@ class _HomeState extends State<Home> {
       getTarefa.text = "";
       newToDo["ok"] = false;
       _toDoList.add(newToDo);
+      _saveData();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    String  e= "asdas";
+    String e = "asdas";
     return Scaffold(
       appBar: AppBar(
         title: Text("Lista de Tarefas"),
@@ -58,37 +69,55 @@ class _HomeState extends State<Home> {
                   label: Text("Add"),
                   textColor: Colors.white,
                   onPressed: _addToDo,
-
                 )
               ],
             ),
           ),
           Expanded(
-
               child: ListView.builder(
                   padding: EdgeInsets.only(top: 10.0),
                   itemCount: _toDoList.length,
                   itemBuilder: (context, index) {
-                    return CheckboxListTile(
-                      title: Text(_toDoList[index]["title"]),
-                      value: _toDoList[index]["ok"],
-                      secondary: CircleAvatar(
-                        child: Icon(
-                            _toDoList[index]["ok"] ? Icons.check : Icons.error),),
-                      onChanged: (c) {
-                        setState(() {
-                          _toDoList[index]["ok"]=c;
-                        });
-
-                      },
-                    );
-                  })
-          )
+                    //CHAMAMOS A LISTA NA FUNCAO DO RETURN
+                    return buildItem(context, index);
+                  }))
         ],
       ),
     );
   }
 
+  //UTILIZADO PARA GERAR A LISTA DE ITENS
+  Widget buildItem(context, index) {
+    return Dismissible(
+      key: Key(DateTime.now().microsecondsSinceEpoch.toString()),
+      background: Container(
+        color: Colors.red,
+        child: Align(
+          alignment: Alignment(-0.9, 0.0),
+          child: Icon(
+            Icons.delete,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      direction: DismissDirection.startToEnd,
+      child: CheckboxListTile(
+        title: Text(_toDoList[index]["title"]),
+        value: _toDoList[index]["ok"],
+        secondary: CircleAvatar(
+          child: Icon(_toDoList[index]["ok"] ? Icons.check : Icons.error),
+        ),
+        onChanged: (c) {
+          setState(() {
+            _toDoList[index]["ok"] = c;
+            _saveData();
+          });
+        },
+      ),
+    );
+  }
+
+  /**/
   Future<File> _getFile() async {
     final directory = await getApplicationDocumentsDirectory();
     return File("${directory.path}/data.json");
